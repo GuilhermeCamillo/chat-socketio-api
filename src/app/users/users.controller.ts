@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -22,8 +23,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async index() {
-    return await this.usersService.findAll();
+  async index(@Req() req: any) {
+    return await this.usersService.findAll(req.user.id);
   }
 
   @Post()

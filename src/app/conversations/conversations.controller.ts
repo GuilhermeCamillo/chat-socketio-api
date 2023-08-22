@@ -1,9 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { ConversationsService } from './conversations.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { UpdateConversationDto } from './dto/update-conversation.dto';
+import { AuthGuard } from '@nestjs/passport';
 
-@Controller('conversations')
+@Controller('api/v1/conversations')
+@UseGuards(AuthGuard('jwt'))
 export class ConversationsController {
   constructor(private readonly conversationsService: ConversationsService) {}
 
@@ -18,12 +30,18 @@ export class ConversationsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.conversationsService.findOne(+id);
+  findOne(@Param('id') id: string, @Req() req: any) {
+    return this.conversationsService.findOne({
+      receiverId: id,
+      senderId: req.user.id,
+    });
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateConversationDto: UpdateConversationDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateConversationDto: UpdateConversationDto,
+  ) {
     return this.conversationsService.update(+id, updateConversationDto);
   }
 

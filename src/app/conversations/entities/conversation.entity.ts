@@ -1,15 +1,24 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { UsersEntity } from 'src/app/users/users.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'conversations' })
 export class Conversation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  sender: string;
+  @ManyToOne(() => UsersEntity)
+  @JoinColumn({ name: 'sender_id' })
+  sender: UsersEntity;
 
-  @Column()
-  receiver: string;
+  @ManyToOne(() => UsersEntity)
+  @JoinColumn({ name: 'receiver_id' })
+  receiver: UsersEntity;
 
   @Column()
   body: string;

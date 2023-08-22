@@ -2,10 +2,10 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateConversationDto {
   @IsNotEmpty()
-  sender: string;
+  senderId: string;
 
   @IsNotEmpty()
-  receiver: string;
+  receiverId: string;
 
   @IsNotEmpty()
   body: string;
