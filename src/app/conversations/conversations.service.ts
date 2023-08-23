@@ -16,15 +16,14 @@ export class ConversationsService {
   ) {}
 
   async create(createConversationDto: CreateConversationDto) {
-    let receiver: UsersEntity;
-    let sender: UsersEntity;
-    await Promise.all([
-      (receiver = await this.usersRepository.findOne({
+
+    const [receiver, sender] = await Promise.all([
+      await this.usersRepository.findOne({
         where: { id: createConversationDto.receiverId },
-      })),
-      (sender = await this.usersRepository.findOne({
+      }),
+      await this.usersRepository.findOne({
         where: { id: createConversationDto.senderId },
-      })),
+      }),
     ]);
 
     return this.conversationsRepository.save(
@@ -40,13 +39,7 @@ export class ConversationsService {
     return `This action returns all conversations`;
   }
 
-  async findOne({
-    receiverId,
-    senderId,
-  }: {
-    receiverId: string;
-    senderId: string;
-  }): Promise<Conversation[]> {
+  async findOne({receiverId,senderId,}: {receiverId: string; senderId: string;}): Promise<Conversation[]> {
     return this.conversationsRepository.find({
       relations: ['receiver', 'sender'],
       select: {
@@ -66,19 +59,8 @@ export class ConversationsService {
         body: true,
         sendDateTime: true,
       },
-      where: [
-        {
-          receiver: { id: receiverId },
-          sender: { id: senderId },
-        },
-        {
-          receiver: { id: senderId },
-          sender: { id: receiverId },
-        },
-      ],
-      order: {
-        sendDateTime: 'DESC',
-      },
+      where: [{ receiver: { id: receiverId },sender: { id: senderId },},{receiver: { id: senderId },sender: { id: receiverId }},],
+      order: {sendDateTime: 'DESC'},
     });
   }
 
